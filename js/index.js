@@ -2,6 +2,7 @@
 
 // Constants
 const basePrice = 10;
+
 const ingredients = {
   pepperoni: { name: 'pepperoni', price: 1 },
   mushrooms: { name: 'Mushrooms', price: 1 },
@@ -10,7 +11,7 @@ const ingredients = {
   glutenFreeCrust: { name: 'Gluten-free crust', price: 5 }
 };
 
-// Initial value of the state (the state values can change over time)
+// Initial value of the state (the state values can change over time on click)
 const state = {
   pepperoni: true,
   mushrooms: true,
@@ -32,6 +33,12 @@ function renderEverything() {
   renderPrice();
 }
 
+//Add and remove pepperoni, mushrooms, and green peppers from the pizza.
+// ->>>> When the button is clicked :
+//Hide/show all the following sections at the same time
+// Selectionner tous les pepperronsi, 
+//pour chacun si son state is => true style.visibility : visible
+
 function renderPepperoni() {
   document.querySelectorAll('.pep').forEach((onePep) => {
     if (state.pepperoni) {
@@ -44,40 +51,147 @@ function renderPepperoni() {
 
 function renderMushrooms() {
   // Iteration 1: set the visibility of `<section class="mushroom">`
+  document.querySelectorAll('.mushroom').forEach((oneMush) => {
+    if (state.mushrooms) {
+      oneMush.style.visibility = 'visible';
+    } else {
+      oneMush.style.visibility = 'hidden';
+    }
+  });
+
 }
 
 function renderGreenPeppers() {
   // Iteration 1: set the visibility of `<section class="green-pepper">`
+  document.querySelectorAll('.green-pepper').forEach((oneGreenPepper) => {
+    if (state.greenPeppers) {
+      oneGreenPepper.style.visibility = 'visible';
+    } else {
+      oneGreenPepper.style.visibility = 'hidden';
+    }
+  });
 }
 
 function renderWhiteSauce() {
   // Iteration 2: add/remove the class "sauce-white" of `<section class="sauce">`
+  // => Select .sauce, puis add ou remove la class.
+  
+    if (state.whiteSauce) {
+      document.querySelector('.sauce').classList.add('sauce-white');
+    } else {
+      document.querySelector('.sauce').classList.remove('sauce-white');
+    }
+  
 }
 
 function renderGlutenFreeCrust() {
   // Iteration 2: add/remove the class "crust-gluten-free" of `<section class="crust">`
+  // Différente façon :
+  const crust = document.querySelector('.crust');
+  if(!state.glutenFreeCrust) {
+    crust.classList.remove('crust-gluten-free')
+  } else {
+    crust.classList.add('crust-gluten-free')
+  }
 }
 
 function renderButtons() {
   // Iteration 3: add/remove the class "active" of each `<button class="btn">`
+
+  if(state.pepperoni) {
+    document.querySelector('.btn-pepperoni').classList.remove('active')
+  } else {
+    document.querySelector('.btn-pepperoni').classList.add('active')
+  }
+
+  if(state.mushrooms) {
+    document.querySelector('.btn-mushrooms').classList.remove('active')
+  } else {
+    document.querySelector('.btn-mushrooms').classList.add('active')
+  }
+
+  if(state.greenPeppers) {
+    document.querySelector('.btn-green-peppers').classList.remove('active')
+  } else {
+    document.querySelector('.btn-green-peppers').classList.add('active')
+  }
+
+  if(state.sauce) {
+    document.querySelector('.btn-sauce').classList.remove('active')
+  } else {
+    document.querySelector('.btn-sauce').classList.add('active')
+  }
+
+  if(state.crust) {
+    document.querySelector('.btn-crust').classList.remove('active')
+  } else {
+    document.querySelector('.btn-crust').classList.add('active')
+  }
+
 }
 
 function renderPrice() {
   // Iteration 4: change the HTML of `<aside class="panel price">`
+  // recup value true and false de state du click
+  // hide/show ingredients in the list + add or not the cost to total
+  const total = document.querySelector('aside strong');
+  const ingredientsList = document.querySelector('aside ul');
+
+  ingredientsList.innerHTML = '';
+  // loop state pour ingrédient true 
+  for (const ingredient in state) {
+    if (state[ingredient]) {
+      // update price - square bracket pourquoi...
+      basePrice += ingredients[ingredient].price;
+      // update list ingredients 
+      ingredientsList.innerHTML += `<li>'$'${ingredients[ingredient].price} ${ingredients[ingredient].name.toLowerCase()}</li>`;
+    }
+  }
+  total.textContent = '$' + basePrice;
 }
 
 renderEverything();
 
+// Create the code to hide/show those elements when 
+// the buttons are clicked. For this, you will have to:
+
+// - Add click event listener on <button class="btn btn-mushrooms"> 
+//  - Write the code for the functions renderMushrooms() 
+// 1/ Select tous les boutons, ajout addEventListener pour action click, 
+// 2/ fonction pour inverser le state de l'ingrédient à chaque click
+// dans l'addEvent mettre l'action à écouter et ce qu'il doit se passer.
+
 // Iteration 1: Example of a click event listener on `<button class="btn btn-pepperoni">`
 document.querySelector('.btn.btn-pepperoni').addEventListener('click', function () {
   state.pepperoni = !state.pepperoni;
+  renderEverything(); // là où il y a l'ensemble des render par ingrédients 
+});
+// renderEverything()-> f qui call l'ensemble des render ingrédients.
+// celles-ci changeront la visibilité. 
+
+// Iteration 1: Add click event listener on `<button class="btn btn-mushrooms">`
+document.querySelector('.btn.btn-mushrooms')
+.addEventListener('click', function () {
+  state.mushrooms = !state.mushrooms;
   renderEverything();
 });
 
-// Iteration 1: Add click event listener on `<button class="btn btn-mushrooms">`
-
 // Iteration 1: Add click event listener on `<button class="btn btn-green-peppers">`
+document.querySelector('.btn.btn-green-peppers')
+.addEventListener('click', function () {
+  state.greenPeppers = !state.greenPeppers;
+  renderEverything();
+});
 
 // Iteration 2: Add click event listener on `<button class="btn btn-sauce">`
+document.querySelector('.btn.btn-sauce')
+.addEventListener('click', function () {
+  state.whiteSauce = !state.whiteSauce;
+  renderEverything();
+});
 
 // Iteration 2: Add click event listener on `<button class="btn btn-crust">`
+document.querySelector('.btn.btn-crust').addEventListener('click', function () {
+  state.glutenFreeCrust = !state.glutenFreeCrust;
+  renderEverything();
+});
